@@ -3,6 +3,8 @@ import {
   Flex, 
   Text,
 } from '@chakra-ui/react'
+import firebase from 'firebase'
+
 import ProblemViewSidebar from './ProblemViewSidebar'
 import ProblemViewTable from './ProblemViewTable'
 import ProblemDialog from './ProblemDialog'
@@ -28,6 +30,21 @@ const ProblemView = props => {
       data: null,
     })
   }
+
+  const queryProblems = async () => {
+    const db = firebase.firestore()
+    let questions = []
+    db.collection('question').onSnapshot((snapshot) => {
+      snapshot.forEach((doc) => {
+        const documentData = doc.data()
+        console.log(documentData)
+        questions.push({ ...documentData, id: doc.id })
+      })
+    })
+    console.log(questions)
+  }
+
+  //queryProblems()
 
   return (
     <Flex>

@@ -2,14 +2,14 @@ import React, { useState } from 'react'
 import { Flex, Text } from '@chakra-ui/react'
 import { Route, Switch } from 'react-router-dom'
 import ProblemRouter from '../Problem/ProblemRouter'
-import EventView from '../Event/EventView'
+import EventRouter from '../Event/EventRouter'
 
 const HomeView = props => {
 
   return (
     <Switch>
       <Route path='/problem' component={ProblemRouter} />
-      <Route path='/event' component={EventView} />
+      <Route path='/event' component={EventRouter} />
       <Route
         path='/home'
         render={() => (

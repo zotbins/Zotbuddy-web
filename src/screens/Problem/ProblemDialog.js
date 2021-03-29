@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { useForm } from 'react-hook-form'
 import { 
-  Flex, 
+  Flex,
   Text,
   Modal,
   ModalOverlay,
@@ -16,7 +15,9 @@ import {
   Textarea,
   Checkbox,
   Divider,
+  useToast
 } from '@chakra-ui/react'
+import firebase from 'firebase'
 
 const DEFAULT_PROBLEM = {
   difficulty: 'EASY',
@@ -33,20 +34,42 @@ const ProblemDialog = props => {
   const { open, data, state } = dialog
   const difficulies = ['EASY', 'MEDIUM', 'HARD']
 
-  const [ problem, setProblem ] = useState(DEFAULT_PROBLEM)
+  const [ problem, setProblem ] = useState({...DEFAULT_PROBLEM})
   const [ choices, setChoices ] = useState([])
-
+  const toast = useToast()
   const initialRef = useRef()
 
   const handleCloseDialog = () => {
     setChoices([])
-    setProblem(DEFAULT_PROBLEM)
+    setProblem({...DEFAULT_PROBLEM})
     props.handleClose()
   }
 
+  const addProblem = async () => {
+    const db = firebase.firestore()
+    const choiceRefs = await Promise.all(choices.map((choice) => db.collection('choice').add({
+      choiceText: choice.choiceText,
+      isAnswer: choice.isAnswer,
+    })))
+    //TODO: Need to delete choiceRefs if add problem mutation fails to run...
+    const problemRef = await db.collection('question').add({
+      choices: [...choiceRefs],
+      difficulty: problem.difficulty,
+      question: problem.questionText,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    })
+    toast({
+      title: choiceRefs && problemRef ? 'Success' : 'Error',
+      description:  choiceRefs && problemRef ? 'Added problem to Firebase' : 'An error occured while adding problem to Firebase',
+      status: choiceRefs && problemRef ? 'success': 'error',
+      duration: 3000,
+      isClosable: true,
+    })
+    props.handleClose()
+  }
 
   return (
-    <Modal initialFocusRef={initialRef} isOpen={open} onClose={handleCloseDialog} size={'lg'}>
+    <Modal initialFocusRef={initialRef} isOpen={open} onClose={handleCloseDialog} size={'lg'} >
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Add a new problem</ModalHeader>
@@ -97,20 +120,19 @@ const ProblemDialog = props => {
                   <Textarea
                     value={choice.choiceText}
                     onChange={e => { 
-                      choices[index] = e.target.value
+                      choices[index].choiceText = e.target.value
                       setChoices([...choices])
                     }}
                     placeholder={'Enter the text for this choice'}
                     size={'lg'}
                   />
-                  
                 </Flex>
               )
             })}
             <Button 
-              colorscheme='teal' 
+              colorscheme='teal'
               onClick={() => {
-                choices.push(DEFAULT_CHOICE)
+                choices.push({...DEFAULT_CHOICE})
                 setChoices([...choices])
               }}
             >
@@ -119,7 +141,11 @@ const ProblemDialog = props => {
           </Stack>
         </ModalBody>
         <ModalFooter>
-          <Button colorscheme='teal' mr={3}>
+          <Button 
+            colorscheme='teal' 
+            mr={3}
+            onClick={addProblem}
+          >
             Save
           </Button>
           <Button onClick={handleCloseDialog}>
