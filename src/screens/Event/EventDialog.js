@@ -76,7 +76,7 @@ const EventDialog = props => {
     <Modal initialFocusRef={initialRef} isOpen={open} onClose={handleCloseDialog} size={'lg'} >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Add a new problem</ModalHeader>
+        <ModalHeader>Add a new event</ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6} >
           <Stack>
