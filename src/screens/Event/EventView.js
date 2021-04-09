@@ -46,6 +46,10 @@ const EventView = props => {
 
   // queryProblems()
 
+  /**
+   * query trivia questions here and pass the data to problem view table
+   */
+
   return (
     <Flex>
       <EventViewSidebar 
