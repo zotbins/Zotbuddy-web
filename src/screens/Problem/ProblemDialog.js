@@ -58,10 +58,33 @@ const ProblemDialog = props => {
       question: problem.questionText,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     })
+    let difficultyRef = null
+    switch (problem.difficulty) {
+      case 'EASY':
+        difficultyRef = await db.collection('difficulty').doc('XMitd2yPoQx1HALi1LtH').update({
+          easyArray: firebase.firestore.FieldValue.arrayUnion(problemRef),
+          easyArraySize: firebase.firestore.FieldValue.increment(1),
+        })
+        break
+      case 'MEDIUM':
+        difficultyRef = await db.collection('difficulty').doc('XMitd2yPoQx1HALi1LtH').update({
+          mediumArray: firebase.firestore.FieldValue.arrayUnion(problemRef),
+          mediumArraySize: firebase.firestore.FieldValue.increment(1),
+        })
+        break
+      case 'HARD':
+        difficultyRef = await db.collection('difficulty').doc('XMitd2yPoQx1HALi1LtH').update({
+          hardArray: firebase.firestore.FieldValue.arrayUnion(problemRef),
+          hardArraySize: firebase.firestore.FieldValue.increment(1),
+        })
+        break
+      default:
+        break
+    }
     toast({
-      title: choiceRefs && problemRef ? 'Success' : 'Error',
-      description:  choiceRefs && problemRef ? 'Added problem to Firebase' : 'An error occured while adding problem to Firebase',
-      status: choiceRefs && problemRef ? 'success': 'error',
+      title: choiceRefs && problemRef && difficultyRef ? 'Success' : 'Error',
+      description:  choiceRefs && problemRef && difficultyRef  ? 'Added problem to Firebase' : 'An error occured while adding problem to Firebase',
+      status: choiceRefs && problemRef && difficultyRef  ? 'success': 'error',
       duration: 3000,
       isClosable: true,
     })
