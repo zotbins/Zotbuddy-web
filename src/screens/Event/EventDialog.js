@@ -60,11 +60,12 @@ const EventDialog = props => {
       description: description,
       startDate: startDate,
       endDate: endDate,
+      location: location,
       imageUrl: ''
     })
     toast({
       title: eventRef ? 'Success' : 'Error',
-      description:  eventRef ? 'Added problem to Firebase' : 'An error occured while adding problem to Firebase',
+      description:  eventRef ? 'Added event to Firebase' : 'An error occured while adding event to Firebase',
       status: eventRef ? 'success': 'error',
       duration: 3000,
       isClosable: true,

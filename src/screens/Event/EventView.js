@@ -31,37 +31,36 @@ const EventView = props => {
     })
   }
 
-  // const queryProblems = async () => {
-  //   const db = firebase.firestore()
-  //   let questions = []
-  //   db.collection('question').onSnapshot((snapshot) => {
-  //     snapshot.forEach((doc) => {
-  //       const documentData = doc.data()
-  //       console.log(documentData)
-  //       questions.push({ ...documentData, id: doc.id })
-  //     })
-  //   })
-  //   console.log(questions)
-  // }
-
-  // queryProblems()
+  const queryEvents = async () => {
+     const db = firebase.firestore()
+     let events = []
+     db.collection('event').onSnapshot((snapshot) => {
+       snapshot.forEach((doc) => {
+         const documentData = doc.data()
+         events.push({ ...documentData, id: doc.id })
+       })
+     })
+     console.log("events: " , events)
+     return(events)
+    }
 
   /**
-   * query trivia questions here and pass the data to problem view table
+   * query events here and pass the data to problem view table
    */
-
   return (
-    <Flex>
-      <EventViewSidebar 
-        handleOpenAddDialog={handleOpenAddDialog}
-      />
-      <Flex align={'left'} direction={'column'} grow={1}>
-        <EventViewTable />
-      </Flex>
-      <EventDialog
-        dialog={dialog}
-        handleClose={handleCloseDialog}
-      />
+    <Flex paddingTop={10} paddingRight={100}>
+        <Flex direction={'column'} grow={1} paddingLeft={30} paddingRight={30}>
+            <EventViewSidebar 
+                handleOpenAddDialog={handleOpenAddDialog}
+            />
+        </Flex>
+        <Flex align={'left'} direction={'column'} grow={1}>
+            <EventViewTable handleOpenAddDialog={handleOpenAddDialog} getData={queryEvents}/>
+        </Flex>
+        <EventDialog
+            dialog={dialog}
+            handleClose={handleCloseDialog}
+        />
     </Flex>
   )
 }
