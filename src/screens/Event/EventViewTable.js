@@ -1,6 +1,5 @@
-import React, { useState, useMemo, useEffect } from 'react'
-import { Flex, Text } from '@chakra-ui/react'
-import { Route, Switch } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { Flex } from '@chakra-ui/react'
 import './event-table.css'
 import './GlobalFilter.js'
 import firebase from 'firebase'
@@ -40,290 +39,29 @@ const COLUMNS = [
     }
 ]
 
-
-const DATA = [
-    {
-        "id": "event1",
-        "startDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "endDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "title": "Testing Event #1",
-        "description": "This is a test event!",
-        "location": "On Zoom",
-        "imageURL": "https://www.rd.com/wp-content/uploads/2019/05/American-shorthair-cat-scaled.jpg"
-    },
-    {
-        "id": "event2",
-        "startDate": "April 21, 2021 at 12:59:10 PM UTC-7",
-        "endDate": "April 21, 2021 at 12:59:10 PM UTC-7",
-        "title": "Testing Event #2",
-        "description": "This is a test event!",
-        "location": "On Zoom",
-        "imageURL": "https://www.rd.com/wp-content/uploads/2019/05/American-shorthair-cat-scaled.jpg"
-    },
-    {
-        "id": "event3",
-        "startDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "endDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "title": "Testing Event #3",
-        "description": "This is a test event!",
-        "location": "On Zoom",
-        "imageURL": "https://www.rd.com/wp-content/uploads/2019/05/American-shorthair-cat-scaled.jpg"
-    },
-    {
-        "id": "event4",
-        "startDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "endDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "title": "Testing Event #4",
-        "description": "This is a test event!",
-        "location": "On Zoom",
-        "imageURL": "https://www.rd.com/wp-content/uploads/2019/05/American-shorthair-cat-scaled.jpg"
-    },
-    {
-        "id": "event1",
-        "startDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "endDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "title": "Testing Event #1",
-        "description": "This is a test event!",
-        "location": "On Zoom",
-        "imageURL": "https://www.rd.com/wp-content/uploads/2019/05/American-shorthair-cat-scaled.jpg"
-    },
-    {
-        "id": "event2",
-        "startDate": "April 21, 2021 at 12:59:10 PM UTC-7",
-        "endDate": "April 21, 2021 at 12:59:10 PM UTC-7",
-        "title": "Testing Event #2",
-        "description": "This is a test event!",
-        "location": "On Zoom",
-        "imageURL": "https://www.rd.com/wp-content/uploads/2019/05/American-shorthair-cat-scaled.jpg"
-    },
-    {
-        "id": "event3",
-        "startDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "endDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "title": "Testing Event #3",
-        "description": "This is a test event!",
-        "location": "On Zoom",
-        "imageURL": "https://www.rd.com/wp-content/uploads/2019/05/American-shorthair-cat-scaled.jpg"
-    },
-    {
-        "id": "event4",
-        "startDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "endDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "title": "Testing Event #4",
-        "description": "This is a test event!",
-        "location": "On Zoom",
-        "imageURL": "https://www.rd.com/wp-content/uploads/2019/05/American-shorthair-cat-scaled.jpg"
-    },
-    {
-        "id": "event1",
-        "startDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "endDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "title": "Testing Event #1",
-        "description": "This is a test event!",
-        "location": "On Zoom",
-        "imageURL": "https://www.rd.com/wp-content/uploads/2019/05/American-shorthair-cat-scaled.jpg"
-    },
-    {
-        "id": "event2",
-        "startDate": "April 21, 2021 at 12:59:10 PM UTC-7",
-        "endDate": "April 21, 2021 at 12:59:10 PM UTC-7",
-        "title": "Testing Event #2",
-        "description": "This is a test event!",
-        "location": "On Zoom",
-        "imageURL": "https://www.rd.com/wp-content/uploads/2019/05/American-shorthair-cat-scaled.jpg"
-    },
-    {
-        "id": "event3",
-        "startDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "endDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "title": "Testing Event #3",
-        "description": "This is a test event!",
-        "location": "On Zoom",
-        "imageURL": "https://www.rd.com/wp-content/uploads/2019/05/American-shorthair-cat-scaled.jpg"
-    },
-    {
-        "id": "event4",
-        "startDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "endDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "title": "Testing Event #4",
-        "description": "This is a test event!",
-        "location": "On Zoom",
-        "imageURL": "https://www.rd.com/wp-content/uploads/2019/05/American-shorthair-cat-scaled.jpg"
-    },
-    {
-        "id": "event1",
-        "startDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "endDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "title": "Testing Event #1",
-        "description": "This is a test event!",
-        "location": "On Zoom",
-        "imageURL": "https://www.rd.com/wp-content/uploads/2019/05/American-shorthair-cat-scaled.jpg"
-    },
-    {
-        "id": "event2",
-        "startDate": "April 21, 2021 at 12:59:10 PM UTC-7",
-        "endDate": "April 21, 2021 at 12:59:10 PM UTC-7",
-        "title": "Testing Event #2",
-        "description": "This is a test event!",
-        "location": "On Zoom",
-        "imageURL": "https://www.rd.com/wp-content/uploads/2019/05/American-shorthair-cat-scaled.jpg"
-    },
-    {
-        "id": "event3",
-        "startDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "endDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "title": "Testing Event #3",
-        "description": "This is a test event!",
-        "location": "On Zoom",
-        "imageURL": "https://www.rd.com/wp-content/uploads/2019/05/American-shorthair-cat-scaled.jpg"
-    },
-    {
-        "id": "event4",
-        "startDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "endDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "title": "Testing Event #4",
-        "description": "This is a test event!",
-        "location": "On Zoom",
-        "imageURL": "https://www.rd.com/wp-content/uploads/2019/05/American-shorthair-cat-scaled.jpg"
-    },
-    {
-        "id": "event1",
-        "startDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "endDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "title": "Testing Event #1",
-        "description": "This is a test event!",
-        "location": "On Zoom",
-        "imageURL": "https://www.rd.com/wp-content/uploads/2019/05/American-shorthair-cat-scaled.jpg"
-    },
-    {
-        "id": "event2",
-        "startDate": "April 21, 2021 at 12:59:10 PM UTC-7",
-        "endDate": "April 21, 2021 at 12:59:10 PM UTC-7",
-        "title": "Testing Event #2",
-        "description": "This is a test event!",
-        "location": "On Zoom",
-        "imageURL": "https://www.rd.com/wp-content/uploads/2019/05/American-shorthair-cat-scaled.jpg"
-    },
-    {
-        "id": "event3",
-        "startDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "endDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "title": "Testing Event #3",
-        "description": "This is a test event!",
-        "location": "On Zoom",
-        "imageURL": "https://www.rd.com/wp-content/uploads/2019/05/American-shorthair-cat-scaled.jpg"
-    },
-    {
-        "id": "event4",
-        "startDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "endDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "title": "Testing Event #4",
-        "description": "This is a test event!",
-        "location": "On Zoom",
-        "imageURL": "https://www.rd.com/wp-content/uploads/2019/05/American-shorthair-cat-scaled.jpg"
-    },
-    {
-        "id": "event1",
-        "startDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "endDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "title": "Testing Event #1",
-        "description": "This is a test event!",
-        "location": "On Zoom",
-        "imageURL": "https://www.rd.com/wp-content/uploads/2019/05/American-shorthair-cat-scaled.jpg"
-    },
-    {
-        "id": "event2",
-        "startDate": "April 21, 2021 at 12:59:10 PM UTC-7",
-        "endDate": "April 21, 2021 at 12:59:10 PM UTC-7",
-        "title": "Testing Event #2",
-        "description": "This is a test event!",
-        "location": "On Zoom",
-        "imageURL": "https://www.rd.com/wp-content/uploads/2019/05/American-shorthair-cat-scaled.jpg"
-    },
-    {
-        "id": "event3",
-        "startDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "endDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "title": "Testing Event #3",
-        "description": "This is a test event!",
-        "location": "On Zoom",
-        "imageURL": "https://www.rd.com/wp-content/uploads/2019/05/American-shorthair-cat-scaled.jpg"
-    },
-    {
-        "id": "event4",
-        "startDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "endDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "title": "Testing Event #4",
-        "description": "This is a test event!",
-        "location": "On Zoom",
-        "imageURL": "https://www.rd.com/wp-content/uploads/2019/05/American-shorthair-cat-scaled.jpg"
-    },
-    {
-        "id": "event1",
-        "startDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "endDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "title": "Testing Event #1",
-        "description": "This is a test event!",
-        "location": "On Zoom",
-        "imageURL": "https://www.rd.com/wp-content/uploads/2019/05/American-shorthair-cat-scaled.jpg"
-    },
-    {
-        "id": "event2",
-        "startDate": "April 21, 2021 at 12:59:10 PM UTC-7",
-        "endDate": "April 21, 2021 at 12:59:10 PM UTC-7",
-        "title": "Testing Event #2",
-        "description": "This is a test event!",
-        "location": "On Zoom",
-        "imageURL": "https://www.rd.com/wp-content/uploads/2019/05/American-shorthair-cat-scaled.jpg"
-    },
-    {
-        "id": "event3",
-        "startDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "endDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "title": "Testing Event #3",
-        "description": "This is a test event!",
-        "location": "On Zoom",
-        "imageURL": "https://www.rd.com/wp-content/uploads/2019/05/American-shorthair-cat-scaled.jpg"
-    },
-    {
-        "id": "event4",
-        "startDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "endDate": "April 18, 2021 at 12:59:10 PM UTC-7",
-        "title": "Testing Event #4",
-        "description": "This is a test event!",
-        "location": "On Zoom",
-        "imageURL": "https://www.rd.com/wp-content/uploads/2019/05/American-shorthair-cat-scaled.jpg"
-    },
-]
-
-
 const EventViewTable = props => {
   /**
    * grab the data from props
    * use react-table here to render the table with the data
    */
 
-  /* useMemo makes sure the data is not recreated during every render! */
   const [DATA, setData] = useState([]);
 
-  //DEBUG: useEffect correctly sets DATA to the array from firebase but memoData is not getting updated
   useEffect(() => {
       const fetchData = async() => {
           try {
-            const db = firebase.firestore()
+            const snapshot = await firebase.firestore().collection('event').get()
             let events = []
-            db.collection('event').onSnapshot((snapshot) => {
-              snapshot.forEach((doc) => {
+            snapshot.forEach((doc) => {
                 events.push({ 
-                    id: doc.id,
-                    startDate: doc.data().startDate,
-                    endDate: doc.data().endDate,
-                    title: doc.data().title,
-                    description: doc.data().description,
-                    location: doc.data().location,
-                    imageURL: doc.data().imageURL
+                    "id": doc.id,
+                    "startDate": doc.data().startDate.toDate().toString(),
+                    "endDate": doc.data().endDate.toDate().toString(),
+                    "title": doc.data().title,
+                    "description": doc.data().description,
+                    "location": doc.data().location,
+                    "imageURL": doc.data().imageURL
                 })
-              })
             })
            setData(events)
           }catch (err){
@@ -333,13 +71,9 @@ const EventViewTable = props => {
       fetchData();
   }, [])
 
-  console.log("INSIDE TABLE: ", DATA)
-  const memoColumns = useMemo(() => COLUMNS, [])
-  const memoData = useMemo(() =>  DATA, [])  
-
   const tableInstance = useTable({
-      columns: memoColumns,
-      data: memoData
+      columns: COLUMNS,
+      data: DATA
   }, useGlobalFilter, useSortBy)
 
   const {
@@ -351,7 +85,6 @@ const EventViewTable = props => {
       state,
       setGlobalFilter
   } = tableInstance
-  console.log("INSIDE TABLE MEMO: ", memoData)  //DEBUG: memodata keeps printing as empty
 
   const { globalFilter } = state
 
