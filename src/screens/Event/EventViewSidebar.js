@@ -1,8 +1,7 @@
 import React from 'react'
-import { Flex, Text, Button, Stack } from '@chakra-ui/react'
+import { Flex, Button, Stack } from '@chakra-ui/react'
 
 const EventViewSidebar = props => {
-    /* Add a button for editing an existing event entry */
   return (
     <Flex
       direction={"column"}
@@ -23,10 +22,10 @@ const EventViewSidebar = props => {
           <Button colorScheme='teal' size='lg' variant="outline" onClick={() => props.handleOpenAddDialog()}>
             Add Event
           </Button>
-          <Button colorScheme='teal' size='lg' variant="outline" onClick={() => props.handleOpenAddDialog()}>
+          <Button colorScheme='teal' size='lg' variant="outline" onClick={() => props.handleOpenEditDialog()}>
             Edit Existing Event
           </Button>
-          <Button colorScheme='teal' size='lg' variant="outline" onClick={() => props.handleOpenAddDialog()}>
+          <Button colorScheme='teal' size='lg' variant="outline" onClick={() => props.handleOpenDeleteDialog()}>
             Delete Event
           </Button>
         </Stack>
