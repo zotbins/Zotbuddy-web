@@ -40,6 +40,7 @@ const EventDialog = props => {
     const [startDate, setStartDate] = useState(new Date())
     const [endDate, setEndDate] = useState(new Date())
 
+
     const toast = useToast()
     const initialRef = useRef()
 
@@ -89,6 +90,8 @@ const EventDialog = props => {
                 setLocation(docRef.data().location)
                 setStartDate(docRef.data().startDate.toDate())
                 setEndDate(docRef.data().endDate.toDate())
+
+ 
             }).catch((error) => { })
         }
     }

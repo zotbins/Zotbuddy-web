@@ -11,20 +11,35 @@ const ProblemViewSidebar = props => {
       overflow='hidden'
       p='10px'
       style={{
-        width: '15.38%',
-        borderRight: '1px #aaaaaa solid',
-        maxWidth: '200px',
+        width: '100%',
+        maxWidth: '15.38%',
         overflowX: undefined,
         flexShrink: 0,
-        textAlign: 'left',
-        backgroundColor: '#e5e5e5',
+        textAlign: 'center',
+        margin: '50px'
+        // width: '15.38%',
+        // borderRight: '1px #aaaaaa solid',
+        // maxWidth: '200px',
+        // overflowX: undefined,
+        // flexShrink: 0,
+        // textAlign: 'left',
+        // backgroundColor: '#e5e5e5',
       }}
     >
-      <Flex direction={'column'} grow={1} justify='space-between'>
-        <Stack spacing={4} direction={'column'} align={'center'}>
-          <Button colorScheme='teal' size='lg' onClick={() => props.handleOpenAddDialog()}>
+      <Flex direction={'column'} grow={1} justify='space-between' align='right'>
+        <Stack spacing={4} direction={'column'} align={'right'}>
+          <Button colorScheme='teal' size='lg' variant='outline' onClick={() => props.handleOpenAddDialog()}>
             Add Problem
           </Button>
+
+          <Button colorScheme='teal' size='lg' variant='outline' onClick={() => props.handleOpenEditDialog()}>
+            Edit Problem
+          </Button>
+
+          <Button colorScheme='teal' size='lg'variant='outline'  onClick={() => props.handleOpenDeleteDialog()}>
+            Delete Problem
+          </Button>
+
         </Stack>
       </Flex>
     </Flex>
