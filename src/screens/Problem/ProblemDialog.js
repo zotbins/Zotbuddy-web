@@ -41,7 +41,7 @@ const ProblemDialog = props => {
   const [ choices, setChoices ] = useState([])
   const [difficulty, setDifficulty] = useState("")
   const [question, setQuestion] =useState("")
-  const [createdat, setCreatedAt] = useState(new Date())
+  const [correctAnswer, setcorrectAnswer] = useState()
 
   const toast = useToast()
   const initialRef = useRef()
@@ -51,7 +51,7 @@ const ProblemDialog = props => {
     setChoices([])
     setDifficulty('')
     setQuestion('')
-    setCreatedAt(new Date())
+    setcorrectAnswer('')
 }, [dialog.open])
 
   const handleCloseDialog = () => {
@@ -62,91 +62,153 @@ const ProblemDialog = props => {
   }
 
   const handleEditFill = async () => {
-
-    if (id != '') {
-        setEditFlag(true);
-        const snapshotc = await firebase.firestore().collection('choice').get()
-
-        let temp_choice = []
-        snapshotc.forEach((doc) => {
-          temp_choice.push({
-            "id": doc.id,
-            "isAnswer": doc.data().isAnswer,
-            "choiceText": doc.data().choiceText
-          })
-        })
-
-        const snapshot = await firebase.firestore().collection('question').doc(id).get().then((doc)=>{
-          console.log("Id: ", id)
-          const c = doc.data().choices
-          let choice_t = []
-          c.map((c1)=>{
-            temp_choice.map((c2) => {
-              if(c2.id == c1.id){
-                choice_t.push({
-                  "isAnswer": c2.isAnswer,
-                  "choiceText": c2.choiceText
-                })
-              }
-            })
-          })
-          setDifficulty(doc.data().difficulty)
-          setQuestion(doc.data().question)
-          setCreatedAt(doc.data().createdAt)
-          setChoices(choice_t)
-        })
-
-
-    }
+    console.log("I am in handleEditFill new version");
+    setEditFlag(true);
+    const snapshot = await firebase.firestore().collection('questions').doc(id).get().then((doc)=>{
+      var ch = []
+      doc.data().choices.map((c) => {
+        if (doc.data().correctAnswer == c){
+          ch.push({"choiceText": c, "isAnswer": true})
+        }else{
+          ch.push({"choiceText": c, "isAnswer": false})
+        }
+      })
+      console.log(ch);
+      setDifficulty(doc.data().difficulty)
+      setQuestion(doc.data().question)
+      setcorrectAnswer(doc.data().correctAnswer)
+      setChoices(ch)
+    })
+    console.log("Clear")
   }
 
-  const editProblem = async() => {
-    
-    const db = firebase.firestore()
-    console.log("I come to editing the problem")
-    const choiceRefs = await Promise.all(choices.map((choice) => db.collection('choice').add({
-      choiceText: choice.choiceText,
-      isAnswer: choice.isAnswer,
-    })))
+  //   if (id != '') {
+  //       setEditFlag(true);
+  //       const snapshotc = await firebase.firestore().collection('choice').get()
 
-    console.log("The new choices are ", choices)
+  //       let temp_choice = []
+  //       snapshotc.forEach((doc) => {
+  //         temp_choice.push({
+  //           "id": doc.id,
+  //           "isAnswer": doc.data().isAnswer,
+  //           "choiceText": doc.data().choiceText
+  //         })
+  //       })
+
+  //       const snapshot = await firebase.firestore().collection('question').doc(id).get().then((doc)=>{
+  //         console.log("Id: ", id)
+  //         const c = doc.data().choices
+  //         let choice_t = []
+  //         c.map((c1)=>{
+  //           temp_choice.map((c2) => {
+  //             if(c2.id == c1.id){
+  //               choice_t.push({
+  //                 "isAnswer": c2.isAnswer,
+  //                 "choiceText": c2.choiceText
+  //               })
+  //             }
+  //           })
+  //         })
+  //         setDifficulty(doc.data().difficulty)
+  //         setQuestion(doc.data().question)
+  //         setCreatedAt(doc.data().createdAt)
+  //         setChoices(choice_t)
+  //       })
+
+
+  //   }
+  // }
+
+  const editProblem = async() => {
+    const db = firebase.firestore()
+    console.log("This is the new version of editing the problem")
+    var ch = []
+    var correctAnswerr = ""
+
+    choices.map((c) => {
+      ch.push(c.choiceText);
+      if (c.isAnswer == true){
+        correctAnswerr = c.choiceText
+      }
+    })
+    console.log("The new choices are ", ch)
     console.log("Difficult is ", difficulty, problem.difficulty)
     console.log("Question is ", question, problem.questionText)
-    console.log("created at is ", createdat, problem.createdAt)
+    console.log("Correct answer is ", correctAnswer, correctAnswerr)
 
-    const problemRef = await db.collection('question').doc(id).update({
-        choices: [...choiceRefs],
-        difficulty: difficulty,
-        question: question,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    const problemRef = await db.collection('questions').doc(id).update({
+      choices: ch,
+      difficulty: problem.difficulty,
+      question: question,
+      correctAnswer: correctAnswerr,
+
     }).then(() => {
         toast({
-            title: 'Success',
-            description: 'Edited event in Firebase',
-            status: 'success',
-            duration: 3000,
-            isClosable: true,
+          title: "Success",
+          description: 'Edited event in Firebase',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
         })
     }).catch((error) => {
         toast({
-            title: 'Error',
-            description: 'An error occured while editing event in Firebase',
-            status: 'error',
-            duration: 3000,
-            isClosable: true,
-        })
-    })
-    setEditFlag(false)
-    props.setRefresh(true)
-    props.handleClose()
+          title: 'Error',
+          description: 'An error occured while editing event in Firebase',
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+      })
+      })
+      setEditFlag(false)
+      props.setRefresh(true)
+      props.handleClose()
+  }
+    
+    // const db = firebase.firestore()
+    // console.log("I come to editing the problem")
+    // const choiceRefs = await Promise.all(choices.map((choice) => db.collection('choice').add({
+    //   choiceText: choice.choiceText,
+    //   isAnswer: choice.isAnswer,
+    // })))
+
+    // console.log("The new choices are ", choices)
+    // console.log("Difficult is ", difficulty, problem.difficulty)
+    // console.log("Question is ", question, problem.questionText)
+    // console.log("Correct answer is ", correctAnswer, problem.correctAnswer)
+
+    // const problemRef = await db.collection('question').doc(id).update({
+    //     choices: [...choiceRefs],
+    //     difficulty: difficulty,
+    //     question: question,
+    //     createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    // }).then(() => {
+    //     toast({
+    //         title: 'Success',
+    //         description: 'Edited event in Firebase',
+    //         status: 'success',
+    //         duration: 3000,
+    //         isClosable: true,
+    //     })
+    // }).catch((error) => {
+    //     toast({
+    //         title: 'Error',
+    //         description: 'An error occured while editing event in Firebase',
+    //         status: 'error',
+    //         duration: 3000,
+    //         isClosable: true,
+    //     })
+    // })
+    // setEditFlag(false)
+    // props.setRefresh(true)
+   
 
     //don't delete any choices, just make a new choice array
     //add the new choices to this question along with updating the function
-  }
+  //}
 
   const deleteProblem = async () => {
     const db = firebase.firestore()
-    const eventRef = await db.collection('question').doc(id).delete().then(() => {
+    const eventRef = await db.collection('questions').doc(id).delete().then(() => {
         toast({
             title: 'Success',
             description: 'Deleted event from Firebase',
@@ -169,55 +231,79 @@ const ProblemDialog = props => {
 
  
   const addProblem = async () => {
-    console.log("I come to add the Problem")
+    console.log("this is the new version of Add a problem")
+    
+    var ch =[];
+    var correctAnswerr = "";
+
+    choices.map((c) => {
+      ch.push(c.choiceText);
+      if (c.isAnswer == true){
+        
+        
+        correctAnswerr = c.choiceText;
+        console.log("The correct answer is ", correctAnswerr)
+      }
+    })
+
     const db = firebase.firestore()
-    
-    const choiceRefs = await Promise.all(choices.map((choice) => db.collection('choice').add({
-      choiceText: choice.choiceText,
-      isAnswer: choice.isAnswer,
-    })))
-    //TODO: Need to delete choiceRefs if add problem mutation fails to run...
-
-    const problemRef = await db.collection('question').add({
-      choices: [...choiceRefs],
+    const problemRef = await db.collection('questions').add({
+      choices: ch,
       difficulty: problem.difficulty,
-      question: problem.questionText,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      question : problem.questionText,
+      correctAnswer : correctAnswerr
     })
-    let difficultyRef = null
-    switch (problem.difficulty) {
-      case 'EASY':
-        difficultyRef = await db.collection('difficulty').doc('XMitd2yPoQx1HALi1LtH').update({
-          easyArray: firebase.firestore.FieldValue.arrayUnion(problemRef),
-          easyArraySize: firebase.firestore.FieldValue.increment(1),
-        })
-        break
-      case 'MEDIUM':
-        difficultyRef = await db.collection('difficulty').doc('XMitd2yPoQx1HALi1LtH').update({
-          mediumArray: firebase.firestore.FieldValue.arrayUnion(problemRef),
-          mediumArraySize: firebase.firestore.FieldValue.increment(1),
-        })
-        break
-      case 'HARD':
-        difficultyRef = await db.collection('difficulty').doc('XMitd2yPoQx1HALi1LtH').update({
-          hardArray: firebase.firestore.FieldValue.arrayUnion(problemRef),
-          hardArraySize: firebase.firestore.FieldValue.increment(1),
-        })
-        break
-      default:
-        break
-    }
-    toast({
-      title: choiceRefs && problemRef && difficultyRef ? 'Success' : 'Error',
-      description:  choiceRefs && problemRef && difficultyRef  ? 'Added problem to Firebase' : 'An error occured while adding problem to Firebase',
-      status: choiceRefs && problemRef && difficultyRef  ? 'success': 'error',
-      duration: 3000,
-      isClosable: true,
-    })
-
-    props.handleClose()
-    
+    props.handleClose();
+  
   }
+  //   const db = firebase.firestore()
+    
+  //   const choiceRefs = await Promise.all(choices.map((choice) => db.collection('choice').add({
+  //     choiceText: choice.choiceText,
+  //     isAnswer: choice.isAnswer,
+  //   })))
+  //   //TODO: Need to delete choiceRefs if add problem mutation fails to run...
+
+  //   const problemRef = await db.collection('question').add({
+  //     choices: [...choiceRefs],
+  //     difficulty: problem.difficulty,
+  //     question: problem.questionText,
+  //     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+  //   })
+  //   let difficultyRef = null
+  //   switch (problem.difficulty) {
+  //     case 'EASY':
+  //       difficultyRef = await db.collection('difficulty').doc('XMitd2yPoQx1HALi1LtH').update({
+  //         easyArray: firebase.firestore.FieldValue.arrayUnion(problemRef),
+  //         easyArraySize: firebase.firestore.FieldValue.increment(1),
+  //       })
+  //       break
+  //     case 'MEDIUM':
+  //       difficultyRef = await db.collection('difficulty').doc('XMitd2yPoQx1HALi1LtH').update({
+  //         mediumArray: firebase.firestore.FieldValue.arrayUnion(problemRef),
+  //         mediumArraySize: firebase.firestore.FieldValue.increment(1),
+  //       })
+  //       break
+  //     case 'HARD':
+  //       difficultyRef = await db.collection('difficulty').doc('XMitd2yPoQx1HALi1LtH').update({
+  //         hardArray: firebase.firestore.FieldValue.arrayUnion(problemRef),
+  //         hardArraySize: firebase.firestore.FieldValue.increment(1),
+  //       })
+  //       break
+  //     default:
+  //       break
+  //   }
+  //   toast({
+  //     title: choiceRefs && problemRef && difficultyRef ? 'Success' : 'Error',
+  //     description:  choiceRefs && problemRef && difficultyRef  ? 'Added problem to Firebase' : 'An error occured while adding problem to Firebase',
+  //     status: choiceRefs && problemRef && difficultyRef  ? 'success': 'error',
+  //     duration: 3000,
+  //     isClosable: true,
+  //   })
+
+  //   props.handleClose()
+    
+  // }
 
   return (
     <Modal initialFocusRef={initialRef} isOpen={open} onClose={handleCloseDialog} size={'lg'} >
@@ -262,44 +348,49 @@ const ProblemDialog = props => {
                       placeholder={'Enter the question text for this problem'}
                       size={'lg'}
                     />
+
                     {choices.map((choice, index) => {
-                      return (
-                        <Flex key={index} direction={'column'} >
-                          <Divider orientation='horizontal' colorScheme={'gray'}/>
-                          <Checkbox 
-                            colorScheme='teal'
-                            size={'lg'}
-                            isChecked={choice.isAnswer}
-                            onChange={() => {
-                              choices[index].isAnswer = !choices[index].isAnswer
-                              setChoices([...choices])
-                            }}
-                            style={{ marginLeft: 'auto' }}
-                          >
-                            Answer
-                          </Checkbox>
-                          <Textarea
-                            value={choice.choiceText}
-                            onChange={e => { 
-                              choices[index].choiceText = e.target.value
-                              setChoices([...choices])
-                            }}
-                            placeholder={'Enter the text for this choice'}
-                            size={'lg'}
-                          />
-                        </Flex>
-                      )
-                    })}
-                    <Button 
-                      colorscheme='teal'
-                      onClick={() => {
-                        choices.push({...DEFAULT_CHOICE})
-                        setChoices([...choices])
-                      }}
-                    >
-                      Add Choice
-                    </Button>
-                  </Stack>
+                        return (
+                          <Flex key={index} direction={'column'} >
+                            <Divider orientation='horizontal' colorScheme={'gray'}/>
+                            <Checkbox 
+                              colorScheme='teal'
+                              size={'lg'}
+                              isChecked={choice.isAnswer}
+                              onChange={() => {
+                                choices[index].isAnswer = !choices[index].isAnswer
+                                setChoices([...choices])
+                              }}
+                              style={{ marginLeft: 'auto' }}
+                            >
+                              Answer
+                            </Checkbox>
+                            <Textarea
+                              value={choice.choiceText}
+                              onChange={e => { 
+                                choices[index].choiceText = e.target.value
+                                setChoices([...choices])
+                              }}
+                              placeholder={'Enter the text for this choice'}
+                              size={'lg'}
+                            />
+                          </Flex>
+                        )
+                      })}
+                      <Button 
+                        colorscheme='teal'
+                        onClick={() => {
+
+
+                          
+                          choices.push({...DEFAULT_CHOICE})
+                          setChoices([...choices])
+                        }}
+                      >
+                        Add Choice
+                      </Button>
+                    </Stack>
+                  //Editing stuff from here
                   : (state == "edit") ?
                       <Stack>
                         <Textarea
@@ -352,6 +443,7 @@ const ProblemDialog = props => {
                                     isChecked={choice.isAnswer}
                                     onChange={() => {
                                       choices[index].isAnswer = !choices[index].isAnswer
+
                                       setChoices([...choices])
                                     }}
                                     style={{ marginLeft: 'auto' }}
@@ -361,7 +453,7 @@ const ProblemDialog = props => {
                                   <Textarea
                                     value={choice.choiceText}
                                     onChange={e => { 
-                                      choices[index].choiceText = e.target.value
+                                      choices[index] = e.target.value
                                       setChoices([...choices])
                                     }}
                                     placeholder={'Enter the text for this choice'}
@@ -383,6 +475,7 @@ const ProblemDialog = props => {
                           <></>
                       }
                       </Stack>
+                      //To here
                   : (state == "delete") ?
                       <Stack>
                         <Textarea

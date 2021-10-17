@@ -25,19 +25,28 @@ const COLUMN = [
       Header: "Answer Choices",
       accessor: (values) => {
         var ch = ""
+        var ctr= 0;
         values.choices.map((choice) => {
-          if (choice.isAnswer === true){
-            ch = ch + choice.choiceText + " ✅ \r\n"
-          }else if(choice.choiceText === undefined || choice.choiceText === ""){
-            console.log(choice.choiceText)
-            ch = ch
-          }
-          else{
-            ch = ch + choice.choiceText + " ❌ \
-            "
-          }
-          
+          if (ctr == 0){
+            ch = ch + choice;
+            ctr = 1;
+          } else{
+          ch = ch + " , " + choice;
+        }
         })
+        // values.choices.map((choice) => {
+        //   if (choice.isAnswer === true){
+        //     ch = ch + choice.choiceText + " ✅ \r\n"
+        //   }else if(choice.choiceText === undefined || choice.choiceText === ""){
+        //     console.log(choice.choiceText)
+        //     ch = ch
+        //   }
+        //   else{
+        //     ch = ch + choice.choiceText + " ❌ \
+        //     "
+        //   }
+          
+        // })
         return ch
       },
       width: 50,
@@ -51,25 +60,8 @@ const COLUMN = [
 
     
     {
-      Header: "Created At",
-      accessor: (value) => {
-
-        if (value.createdAt.toString() == ""){
-          return "No Date"
-        }
-        else{
-          var x = formatISO(value.createdAt, 'yyyy-mm-dd[T]hh:mm:sszz')
-          return x
-        }
-
-      },
-      Cell: ({value}) => {
-        if (value == "No Date"){
-          return value
-        }
-        return new Date(value).toString()
-
-      }
+      Header: "Correct Answer",
+      accessor: "correctAnswer"
     }
 ]
 

@@ -55,39 +55,39 @@ const ProblemView = props => {
     //get all the data from the choices and store it inside of an array
     //get all the questions data, compare IDs
     const queryProblems = async () => {
-      const snapshotc = await firebase.firestore().collection('choice').get()
+      //const snapshotc = await firebase.firestore().collection('choice').get()
 
-      let choices = []
-      snapshotc.forEach((doc) => {
-        choices.push({
-          "id": doc.id,
-          "isAnswer": doc.data().isAnswer,
-          "choiceText": doc.data().choiceText
-        })
-      })
+      // let choices = []
+      // snapshotc.forEach((doc) => {
+      //   choices.push({
+      //     "id": doc.id,
+      //     "isAnswer": doc.data().isAnswer,
+      //     "choiceText": doc.data().choiceText
+      //   })
+      // })
 
 
-      const snapshot = await firebase.firestore().collection('question').get()
+      const snapshot = await firebase.firestore().collection('questions').get()
       let questions = []
       snapshot.forEach((doc)=>{
-        const c = doc.data().choices
-        let choice_t = []
-        c.map((c1)=>{
-          choices.map((c2) => {
-            if(c2.id == c1.id){
-              choice_t.push({
-                "isAnswer": c2.isAnswer,
-                "choiceText": c2.choiceText
-              })
-            }
-          })
-        })
+        //const c = doc.data().choices
+        //let choice_t = []
+        //c.map((c1)=>{
+          //choices.map((c2) => {
+            //if(c2.id == c1.id){
+              //choice_t.push({
+                //"isAnswer": c2.isAnswer,
+                //"choiceText": c2.choiceText
+              //})
+            //}
+          //})
+        //})
         questions.push({
           "id": doc.id,
-          "createdAt": doc.data().createdAt ? doc.data().createdAt.toDate() :"" ,
+          "correctAnswer": doc.data().correctAnswer,
           "difficulty": doc.data().difficulty,
           "question": doc.data().question,
-          "choices": choice_t,
+          "choices": doc.data().choices,
 
         })
 
