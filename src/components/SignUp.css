@@ -1,0 +1,17 @@
+.centerCard
+{
+    top: 50%;
+    margin: 0 auto;
+   background-color: rgb(255, 255, 255);
+   
+   display: flex;
+   justify-content: center;
+   padding: 50px;
+   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+   border-radius: 12px;
+   transform: translateY(20%);
+}
+
+form {
+    width: 100%;
+}
