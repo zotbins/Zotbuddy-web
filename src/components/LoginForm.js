@@ -15,36 +15,36 @@ import {
   AlertIcon,
 } from "@chakra-ui/react";
 import "./SignUp.css";
-//import { useAuth } from "../context/AuthContext";
-
+import { useAuth } from "../context/AuthContext";
+import { Route, useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import MainView from "./MainView";
 //TODO routing
 //TODO signup function handleSubmit
 
-export default function SignUpForm() {
-  const nameRef = useRef();
+export default function LoginForm() {
   const emailRef = useRef();
-  const positionRef = useRef();
   const passwordRef = useRef();
-  const passwordConfirmRef = useRef();
   const [errorMsg, setErrorMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  //const { signUp } = useAuth();
+  const { login } = useAuth();
+  const history = useHistory();
 
   async function handleSubmit(e) {
-    console.log("Sign Up button clicked");
     e.preventDefault();
 
     //empty fields are already handled
-    if (passwordRef.current.value !== passwordConfirmRef.current.value) {
-      return setErrorMsg("Passwords Do Not Match");
-    }
+
     setErrorMsg("");
 
-    //loading state is used to prevent spaming of signup button
-    setIsLoading(true);
-
-    //signup with firebase auth
-    //signUp(emailRef.current.value, passwordRef.current.value);
+    try {
+      setIsLoading(true);
+      await login(emailRef.current.value, passwordRef.current.value);
+      // console.log("Logged into:");
+      //console.log(emailRef.current.value);
+      history.push("/");
+    } catch {
+      setErrorMsg("Incorrect Email or Password");
+    }
 
     setIsLoading(false);
   }
@@ -52,11 +52,11 @@ export default function SignUpForm() {
   return (
     <Flex width="full" align="center" justifyContent="center">
       <div className="centerCard">
-        <Box w="400px">
+        <Box w="400px" marginTop="34%" marginBottom="34%">
           <form onSubmit={handleSubmit}>
             <VStack spacing={5}>
               <Heading as="h2" size="xl">
-                Sign Up
+                Login
               </Heading>
               {errorMsg && (
                 <Alert status="error">
@@ -64,10 +64,6 @@ export default function SignUpForm() {
                   {errorMsg}
                 </Alert>
               )}
-              <FormControl isRequired>
-                <FormLabel htmlFor="name">Name</FormLabel>
-                <Input id="name" placeholder="Name" ref={nameRef} />
-              </FormControl>
 
               <FormControl isRequired>
                 <FormLabel htmlFor="email">Email Address</FormLabel>
@@ -80,19 +76,6 @@ export default function SignUpForm() {
               </FormControl>
 
               <FormControl isRequired>
-                <FormLabel htmlFor="email">Position at UCI Dining</FormLabel>
-                <Select
-                  id="position"
-                  placeholder="Select Option"
-                  ref={positionRef}
-                >
-                  <option value="position1">position1</option>
-                  <option value="position2">position2</option>
-                  <option value="position3">position3</option>
-                </Select>
-              </FormControl>
-
-              <FormControl isRequired>
                 <FormLabel htmlFor="password">Password</FormLabel>
                 <Input
                   id="password"
@@ -101,17 +84,7 @@ export default function SignUpForm() {
                   ref={passwordRef}
                 />
               </FormControl>
-              <FormControl isRequired>
-                <FormLabel htmlFor="confirm-password">
-                  Confirm Password
-                </FormLabel>
-                <Input
-                  id="confirm-password"
-                  type="password"
-                  placeholder="Confirm Password"
-                  ref={passwordConfirmRef}
-                />
-              </FormControl>
+
               <Button
                 width="half"
                 mt={4}
@@ -119,13 +92,13 @@ export default function SignUpForm() {
                 type="submit"
                 disabled={isLoading}
               >
-                Sign Up
+                Login
               </Button>
 
               <Text>
-                Already have an account?{" "}
-                <Link href="./login" color="green.600">
-                  Log In
+                Don't have an account?{" "}
+                <Link href="./signup" color="green.600">
+                  Sign Up
                 </Link>
               </Text>
             </VStack>

@@ -9,7 +9,9 @@
    padding: 50px;
    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
    border-radius: 12px;
-   transform: translateY(20%);
+   /*transform: translateY(20%);*/
+   margin-top: 5%;
+   outline: rgb(255, 0, 0) 1px ;
 }
 
 form {
